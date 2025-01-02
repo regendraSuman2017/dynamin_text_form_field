@@ -36,6 +36,7 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
           print("More then 4");
         }
       }
+
     } else {
       emit(RegistrationFieldsState(controllers: [TextEditingController()],controllerLength: 2));
     }
