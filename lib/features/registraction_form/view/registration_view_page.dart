@@ -67,7 +67,6 @@ class _DynamicRegistrationWidgetState extends State<DynamicRegistrationWidget> {
             if (state is RegistrationFieldsState) {
               // Update the list of field keys and focus nodes based on the number of controllers
               _fieldKeys = List.generate(state.controllers.length, (index) => GlobalKey<FormFieldState>());
-
               return Column(
                 children: [
                   Form(
@@ -103,7 +102,7 @@ class _DynamicRegistrationWidgetState extends State<DynamicRegistrationWidget> {
                                 IconButton(
                                   icon: Icon(Icons.delete_outline_sharp, color: Colors.red),
                                   onPressed: () {
-                                    BlocProvider.of<RegistrationBloc>(context).add(RemoveFieldEvent(index));
+                                    context.read<RegistrationBloc>().add(RemoveFieldEvent(index));
                                     // Remove the corresponding GlobalKey and FocusNode when a field is removed
                                     _fieldKeys.removeAt(index);
                                   },
@@ -124,44 +123,53 @@ class _DynamicRegistrationWidgetState extends State<DynamicRegistrationWidget> {
         ),
       ),
 
-      bottomNavigationBar: Row(
+      bottomNavigationBar: BlocBuilder<RegistrationBloc, RegistrationState>(
+  builder: (context, state) {
+    print("akskskj ${state}");
+    if (state is RegistrationFieldsState) {
+      print("akskskj ${state.controllerLength}");
+      if(state.controllerLength<4)
+      return Row(
         children: [
           Expanded(
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(Colors.blueGrey), // Fixed the backgroundColor declaration
-                padding: WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0)), // Add padding for better visual spacing
-                elevation: WidgetStateProperty.all<double>(5), // Add elevation for a shadow effect
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6.0), // Rounded corners
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.blueGrey), // Fixed the backgroundColor declaration
+                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0)), // Add padding for better visual spacing
+                  elevation: WidgetStateProperty.all<double>(5), // Add elevation for a shadow effect
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.0), // Rounded corners
+                    ),
+                  ),
+                  side: WidgetStateProperty.all<BorderSide>(BorderSide(color: Colors.blueGrey, width: 1)), // Optional: Border with color
+                ),
+                onPressed: () {
+                  // Validate the form
+                  if (_formKey.currentState?.validate() ?? false) {
+                    // If form is valid, submit it
+                    context.read<RegistrationBloc>().add(SubmitRegistrationEvent());
+                  } else {
+                    _scrollToFirstInvalidField();
+                  }
+                },
+                child: Text(
+                  'Submit Form',
+                  style: TextStyle(
+                    color: Colors.white, // Text color for better contrast
+                    fontWeight: FontWeight.bold, // Bold text for emphasis
+                    fontSize: 16.0, // Optional: Adjust font size
                   ),
                 ),
-                side: WidgetStateProperty.all<BorderSide>(BorderSide(color: Colors.blueGrey, width: 1)), // Optional: Border with color
-              ),
-              onPressed: () {
-                // Validate the form
-                if (_formKey.currentState?.validate() ?? false) {
-                  // If form is valid, submit it
-                  context.read<RegistrationBloc>().add(SubmitRegistrationEvent());
-                } else {
-                  _scrollToFirstInvalidField();
-                }
-              },
-              child: Text(
-                'Submit Form',
-                style: TextStyle(
-                  color: Colors.white, // Text color for better contrast
-                  fontWeight: FontWeight.bold, // Bold text for emphasis
-                  fontSize: 16.0, // Optional: Adjust font size
-                ),
-              ),
-            )
+              )
 
           ),
-SizedBox(width: 10,),
+          SizedBox(width: 10,),
+
+
+
           Expanded(
-              child: ElevatedButton(
+              child:   ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all<Color>(Colors.green), // Fixed the backgroundColor declaration
                   padding: WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0)), // Add padding for better visual spacing
@@ -174,9 +182,8 @@ SizedBox(width: 10,),
                   side: WidgetStateProperty.all<BorderSide>(BorderSide(color: Colors.blueGrey, width: 1)), // Optional: Border with color
                 ),
                 onPressed: () {
-
-                    // If form is valid, submit it
-                    context.read<RegistrationBloc>().add(AddFieldEvent());
+                  // If form is valid, submit it
+                  context.read<RegistrationBloc>().add(AddFieldEvent());
                 },
                 child: Text(
                   'Add More Field',
@@ -191,7 +198,52 @@ SizedBox(width: 10,),
           ),
 
         ],
-      ),
+      );
+    }else {
+      return Row(
+        children: [
+          Expanded(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.blueGrey), // Fixed the backgroundColor declaration
+                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0)), // Add padding for better visual spacing
+                  elevation: WidgetStateProperty.all<double>(5), // Add elevation for a shadow effect
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.0), // Rounded corners
+                    ),
+                  ),
+                  side: WidgetStateProperty.all<BorderSide>(BorderSide(color: Colors.blueGrey, width: 1)), // Optional: Border with color
+                ),
+                onPressed: () {
+                  // Validate the form
+                  if (_formKey.currentState?.validate() ?? false) {
+                    // If form is valid, submit it
+                    context.read<RegistrationBloc>().add(SubmitRegistrationEvent());
+                  } else {
+                    _scrollToFirstInvalidField();
+                  }
+                },
+                child: Text(
+                  'Submit Form',
+                  style: TextStyle(
+                    color: Colors.white, // Text color for better contrast
+                    fontWeight: FontWeight.bold, // Bold text for emphasis
+                    fontSize: 16.0, // Optional: Adjust font size
+                  ),
+                ),
+              )
+
+          ),
+          SizedBox(width: 10,),
+
+
+        ],
+      );
+    }
+    return TextFormField();
+  },
+),
     );
   }
 

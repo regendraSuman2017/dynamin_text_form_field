@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:text_form_field_dynamic/features/registraction_form/bloc/registration_event.dart';
 import 'package:text_form_field_dynamic/features/registraction_form/bloc/registration_state.dart';
@@ -24,13 +25,19 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
 
   _onAddFieldEvent(event, emit) {
     if (state is RegistrationFieldsState) {
-      final newControllers = List<TextEditingController>.from(
-        (state as RegistrationFieldsState).controllers,
-      )..add(TextEditingController());
+      if((state as RegistrationFieldsState).controllers.length<4) {
+        final List<TextEditingController> newControllers = List<TextEditingController>.from(
+          (state as RegistrationFieldsState).controllers,
+        )..add(TextEditingController());
 
-      emit(RegistrationFieldsState(controllers: newControllers));
+        emit(RegistrationFieldsState(controllers: newControllers,controllerLength: (state as RegistrationFieldsState).controllers.length+1));
+      }else{
+        if (kDebugMode) {
+          print("More then 4");
+        }
+      }
     } else {
-      emit(RegistrationFieldsState(controllers: [TextEditingController()]));
+      emit(RegistrationFieldsState(controllers: [TextEditingController()],controllerLength: 2));
     }
   }
 
@@ -42,7 +49,7 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
   (state as RegistrationFieldsState).controllers,
   )..removeAt(event.index);
 
-  emit(RegistrationFieldsState(controllers: newControllers));
+  emit(RegistrationFieldsState(controllers: newControllers,controllerLength: (state as RegistrationFieldsState).controllers.length+1));
   }
   }
 
