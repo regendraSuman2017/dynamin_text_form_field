@@ -9,4 +9,4 @@ A new Flutter project.
 5. We can Delete added Field
 6. Screen Shot
 
-<img src="https://github.com/regendraSuman2017/dynamin_text_form_field/blob/main/screenShot/Screenshot_1.jpg" height="150"/>
+<img src="https://github.com/regendraSuman2017/dynamin_text_form_field/blob/main/screenShot/Screenshot_1.jpg" height="300"/>
